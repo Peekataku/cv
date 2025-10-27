@@ -14,62 +14,28 @@
   }
 
   header {
-    text-align: center;
-    padding: 30px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #fff;
+    padding: 20px 40px;
     border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   }
 
   header h1 {
-    font-size: 2em;
+    font-size: 1.8em;
     font-weight: 600;
     color: #111;
     margin: 0;
   }
 
-  .filter-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    background-color: #fff;
-    padding: 15px 25px;
-    margin: 20px auto;
-    border-radius: 12px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
-    width: 90%;
-    max-width: 1200px;
-  }
-
-  .filters-left {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .filters-left select,
-  .filters-left input {
-    padding: 8px 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 0.95em;
-    transition: all 0.2s ease;
-  }
-
-  .filters-left select:focus,
-  .filters-left input:focus {
-    border-color: #4a6fa5;
-    outline: none;
-    box-shadow: 0 0 4px rgba(74, 111, 165, 0.3);
-  }
-
-  .buttons-right {
+  .action-buttons {
     display: flex;
     gap: 10px;
   }
 
-  .buttons-right button {
+  .action-buttons button {
     background-color: #e0e0e0;
     border: none;
     border-radius: 8px;
@@ -79,10 +45,41 @@
     transition: all 0.25s ease;
   }
 
-  .buttons-right button:hover {
+  .action-buttons button:hover {
     background-color: #4a6fa5;
     color: #fff;
     box-shadow: 0 2px 6px rgba(74, 111, 165, 0.3);
+  }
+
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    padding: 15px 25px;
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+    width: 90%;
+    max-width: 1200px;
+  }
+
+  .filter-container select,
+  .filter-container input {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95em;
+    transition: all 0.2s ease;
+  }
+
+  .filter-container select:focus,
+  .filter-container input:focus {
+    border-color: #4a6fa5;
+    outline: none;
+    box-shadow: 0 0 4px rgba(74, 111, 165, 0.3);
   }
 
   table {
@@ -114,24 +111,22 @@
 <body>
   <header>
     <h1>Data Tables</h1>
+    <div class="action-buttons">
+      <button id="searchBtn">Search</button>
+      <button id="resetBtn">Reset</button>
+      <button id="deleteBtn">Delete</button>
+    </div>
   </header>
 
   <div class="filter-container">
-    <div class="filters-left">
-      <select id="nameFilter"><option>All Name</option></select>
-      <select id="departmentFilter"><option>All Department</option></select>
-      <select id="locationFilter"><option>All Location</option></select>
-      <select id="nationalityFilter"><option>All Nationality</option></select>
-      <select id="ageFilter"><option>All Age</option></select>
-      <select id="joinedFilter"><option>All Joined</option></select>
-      <select id="salaryFilter"><option>All Salary</option></select>
-      <input type="text" id="searchInput" placeholder="Search...">
-    </div>
-
-    <div class="buttons-right">
-      <button id="searchBtn">Search</button>
-      <button id="resetBtn">Reset</button>
-    </div>
+    <select id="nameFilter"><option>All Name</option></select>
+    <select id="departmentFilter"><option>All Department</option></select>
+    <select id="locationFilter"><option>All Location</option></select>
+    <select id="nationalityFilter"><option>All Nationality</option></select>
+    <select id="ageFilter"><option>All Age</option></select>
+    <select id="joinedFilter"><option>All Joined</option></select>
+    <select id="salaryFilter"><option>All Salary</option></select>
+    <input type="text" id="searchInput" placeholder="Search...">
   </div>
 
   <table id="dataTable">
@@ -175,6 +170,7 @@
   };
 
   const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
+  const tableBody = document.querySelector("#dataTable tbody");
 
   // Populate dropdowns
   dataKeys.forEach((key) => {
@@ -186,8 +182,6 @@
       select.appendChild(opt);
     });
   });
-
-  const tableBody = document.querySelector("#dataTable tbody");
 
   function renderTable(data) {
     tableBody.innerHTML = "";
@@ -222,10 +216,25 @@
   }
 
   document.getElementById("searchBtn").addEventListener("click", filterData);
+
   document.getElementById("resetBtn").addEventListener("click", () => {
     Object.values(filters).forEach((f) => (f.selectedIndex = 0));
     document.getElementById("searchInput").value = "";
     renderTable(sampleData);
+  });
+
+  document.getElementById("deleteBtn").addEventListener("click", () => {
+    const selected = prompt("Enter a name to delete (case sensitive):");
+    if (selected) {
+      const index = sampleData.findIndex((item) => item.name === selected);
+      if (index !== -1) {
+        sampleData.splice(index, 1);
+        renderTable(sampleData);
+        alert(`${selected} has been deleted.`);
+      } else {
+        alert("Name not found.");
+      }
+    }
   });
 
   renderTable(sampleData);
