@@ -38,7 +38,6 @@
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
       margin-bottom: 25px;
-      align-items: center;
     }
 
     select, input {
@@ -100,11 +99,6 @@
       background-color: #f1f1f1;
     }
 
-    .checkbox-col {
-      text-align: center;
-      width: 50px;
-    }
-
     @media (max-width: 600px) {
       table, thead, tbody, th, td, tr {
         display: block;
@@ -147,7 +141,6 @@
 
       <input type="text" id="searchInput" placeholder="Search..." />
       <button id="resetBtn">Reset</button>
-      <button id="deleteBtn">Delete</button>
 
       <select id="nameFilter"></select>
       <select id="departmentFilter"></select>
@@ -161,7 +154,6 @@
     <table id="dataTable">
       <thead>
         <tr>
-          <th class="checkbox-col"><input type="checkbox" id="selectAll" /></th>
           <th>Name</th>
           <th>Department</th>
           <th>Location</th>
@@ -176,7 +168,7 @@
   </main>
 
   <script>
-    let data = [
+    const sampleData = [
       { name: "John Smith", department: "IT", location: "New York", nationality: "American", age: 28, joined: "2019", salary: 50000 },
       { name: "Maria Lopez", department: "HR", location: "Madrid", nationality: "Spanish", age: 35, joined: "2020", salary: 55000 },
       { name: "Ahmed Khan", department: "Finance", location: "Dubai", nationality: "Emirati", age: 30, joined: "2018", salary: 60000 },
@@ -190,8 +182,6 @@
     const colSelect = document.getElementById("colSelect");
     const searchInput = document.getElementById("searchInput");
     const resetBtn = document.getElementById("resetBtn");
-    const deleteBtn = document.getElementById("deleteBtn");
-    const selectAll = document.getElementById("selectAll");
 
     const filters = {
       name: document.getElementById("nameFilter"),
@@ -203,28 +193,24 @@
       salary: document.getElementById("salaryFilter"),
     };
 
-    function renderTable(dataToRender) {
+    // Populate table
+    function renderTable(data) {
       tableBody.innerHTML = "";
-      dataToRender.forEach((item, index) => {
+      data.forEach((item) => {
         const row = document.createElement("tr");
-        const checkbox = document.createElement("td");
-        checkbox.classList.add("checkbox-col");
-        checkbox.innerHTML = `<input type="checkbox" class="row-checkbox" data-index="${index}" />`;
-        row.appendChild(checkbox);
-
         dataKeys.forEach((key) => {
           const cell = document.createElement("td");
           cell.textContent = item[key];
           row.appendChild(cell);
         });
-
         tableBody.appendChild(row);
       });
     }
 
+    // Initialize filters
     function initFilters() {
       Object.entries(filters).forEach(([key, select]) => {
-        const values = [...new Set(data.map((d) => d[key]))];
+        const values = [...new Set(sampleData.map((d) => d[key]))];
         select.innerHTML = `<option value="all">All ${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
         values.forEach((v) => {
           const opt = document.createElement("option");
@@ -236,8 +222,9 @@
       });
     }
 
+    // Apply filters and search
     function applyFilters() {
-      let filtered = [...data];
+      let filtered = [...sampleData];
       Object.entries(filters).forEach(([key, select]) => {
         if (select.value !== "all") {
           filtered = filtered.filter((d) => String(d[key]) === select.value);
@@ -256,39 +243,20 @@
       renderTable(filtered);
     }
 
-    function resetFilters() {
+    // Reset filters
+    resetBtn.addEventListener("click", () => {
       searchInput.value = "";
       colSelect.value = "all";
       Object.values(filters).forEach((select) => (select.value = "all"));
-      renderTable(data);
-    }
-
-    function deleteSelected() {
-      const checkboxes = document.querySelectorAll(".row-checkbox:checked");
-      if (checkboxes.length === 0) {
-        alert("Please select at least one row to delete.");
-        return;
-      }
-
-      const indexesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute("data-index")));
-      data = data.filter((_, idx) => !indexesToDelete.includes(idx));
-
-      renderTable(data);
-      initFilters();
-    }
-
-    selectAll.addEventListener("change", (e) => {
-      const allRowCheckboxes = document.querySelectorAll(".row-checkbox");
-      allRowCheckboxes.forEach(cb => cb.checked = e.target.checked);
+      renderTable(sampleData);
     });
 
-    resetBtn.addEventListener("click", resetFilters);
-    deleteBtn.addEventListener("click", deleteSelected);
     searchInput.addEventListener("input", applyFilters);
     colSelect.addEventListener("change", applyFilters);
 
+    // Initialize
     initFilters();
-    renderTable(data);
+    renderTable(sampleData);
   </script>
 </body>
 </html>
