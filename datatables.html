@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Tables</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #1c1c1c;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    main {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .filter-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 25px;
+    }
+
+    select, input {
+      padding: 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: white;
+      font-size: 14px;
+      transition: 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    select:hover, input:hover {
+      border-color: #555;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 12px;
+      background-color: #333;
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    }
+
+    button:hover {
+      background-color: #555;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px 15px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #2e2e2e;
+      color: white;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+
+    @media (max-width: 600px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      th {
+        display: none;
+      }
+      td {
+        position: relative;
+        padding-left: 50%;
+      }
+      td::before {
+        position: absolute;
+        top: 12px;
+        left: 15px;
+        width: 45%;
+        white-space: nowrap;
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Data Tables</h1>
+  </header>
+
+  <main>
+    <div class="filter-container">
+      <select id="colSelect">
+        <option value="all">All Column</option>
+        <option value="name">Name</option>
+        <option value="department">Department</option>
+        <option value="location">Location</option>
+        <option value="nationality">Nationality</option>
+        <option value="age">Age</option>
+        <option value="joined">Joined</option>
+        <option value="salary">Salary</option>
+      </select>
+
+      <input type="text" id="searchInput" placeholder="Search..." />
+      <button id="resetBtn">Reset</button>
+
+      <select id="nameFilter"></select>
+      <select id="departmentFilter"></select>
+      <select id="locationFilter"></select>
+      <select id="nationalityFilter"></select>
+      <select id="ageFilter"></select>
+      <select id="joinedFilter"></select>
+      <select id="salaryFilter"></select>
+    </div>
+
+    <table id="dataTable">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Location</th>
+          <th>Nationality</th>
+          <th>Age</th>
+          <th>Joined</th>
+          <th>Salary</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+
+  <script>
+    const sampleData = [
+      { name: "John Smith", department: "IT", location: "New York", nationality: "American", age: 28, joined: "2019", salary: 50000 },
+      { name: "Maria Lopez", department: "HR", location: "Madrid", nationality: "Spanish", age: 35, joined: "2020", salary: 55000 },
+      { name: "Ahmed Khan", department: "Finance", location: "Dubai", nationality: "Emirati", age: 30, joined: "2018", salary: 60000 },
+      { name: "Sakura Tanaka", department: "Design", location: "Tokyo", nationality: "Japanese", age: 26, joined: "2021", salary: 48000 },
+      { name: "Miguel Santos", department: "Marketing", location: "Manila", nationality: "Filipino", age: 31, joined: "2022", salary: 52000 }
+    ];
+
+    const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
+
+    const tableBody = document.querySelector("#dataTable tbody");
+    const colSelect = document.getElementById("colSelect");
+    const searchInput = document.getElementById("searchInput");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const filters = {
+      name: document.getElementById("nameFilter"),
+      department: document.getElementById("departmentFilter"),
+      location: document.getElementById("locationFilter"),
+      nationality: document.getElementById("nationalityFilter"),
+      age: document.getElementById("ageFilter"),
+      joined: document.getElementById("joinedFilter"),
+      salary: document.getElementById("salaryFilter"),
+    };
+
+    // Populate table
+    function renderTable(data) {
+      tableBody.innerHTML = "";
+      data.forEach((item) => {
+        const row = document.createElement("tr");
+        dataKeys.forEach((key) => {
+          const cell = document.createElement("td");
+          cell.textContent = item[key];
+          row.appendChild(cell);
+        });
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Initialize filters
+    function initFilters() {
+      Object.entries(filters).forEach(([key, select]) => {
+        const values = [...new Set(sampleData.map((d) => d[key]))];
+        select.innerHTML = `<option value="all">All ${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
+        values.forEach((v) => {
+          const opt = document.createElement("option");
+          opt.value = v;
+          opt.textContent = v;
+          select.appendChild(opt);
+        });
+        select.addEventListener("change", applyFilters);
+      });
+    }
+
+    // Apply filters and search
+    function applyFilters() {
+      let filtered = [...sampleData];
+      Object.entries(filters).forEach(([key, select]) => {
+        if (select.value !== "all") {
+          filtered = filtered.filter((d) => String(d[key]) === select.value);
+        }
+      });
+      const searchVal = searchInput.value.toLowerCase();
+      if (searchVal) {
+        filtered = filtered.filter((d) => {
+          if (colSelect.value === "all") {
+            return Object.values(d).some((v) => String(v).toLowerCase().includes(searchVal));
+          } else {
+            return String(d[colSelect.value]).toLowerCase().includes(searchVal);
+          }
+        });
+      }
+      renderTable(filtered);
+    }
+
+    // Reset filters
+    resetBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      colSelect.value = "all";
+      Object.values(filters).forEach((select) => (select.value = "all"));
+      renderTable(sampleData);
+    });
+
+    searchInput.addEventListener("input", applyFilters);
+    colSelect.addEventListener("change", applyFilters);
+
+    // Initialize
+    initFilters();
+    renderTable(sampleData);
+  </script>
+</body>
+</html>
