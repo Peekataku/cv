@@ -397,11 +397,13 @@
         $("#" + toggleId).append(btn);
       });
 
-      // Column search dropdowns
+      // Column search dropdowns (corrected)
+      const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
       const uniqueValues = {};
       columns.forEach((col, i) => {
-        uniqueValues[col] = [...new Set(sampleData.map((d) => d[Object.keys(sampleData[0])[i + 1]]))];
-        const sel = $("<select>").addClass("form-select form-select-sm")
+        uniqueValues[col] = [...new Set(sampleData.map((d) => d[dataKeys[i]]))];
+        const sel = $("<select>")
+          .addClass("form-select form-select-sm mb-1")
           .append(`<option value="">All ${col}</option>`);
         uniqueValues[col].forEach((v) => sel.append(`<option>${v}</option>`));
         sel.on("change", function () {
