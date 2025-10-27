@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Tables</title>
+  <title>Dark Data Table</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
+      background-color: #121212;
+      color: #e0e0e0;
       margin: 0;
       padding: 0;
     }
 
     header {
       background-color: #1c1c1c;
-      color: white;
+      color: #f5f5f5;
       padding: 20px;
       text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
     }
 
     h1 {
@@ -33,90 +33,87 @@
       margin: auto;
     }
 
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
     .filter-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
-      margin-bottom: 25px;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 10px;
     }
 
     select, input {
       padding: 8px 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #333;
       border-radius: 10px;
-      background: white;
+      background: #1e1e1e;
+      color: #e0e0e0;
       font-size: 14px;
       transition: 0.2s;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     select:hover, input:hover {
-      border-color: #555;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+      border-color: #888;
     }
 
     button {
       padding: 10px 16px;
-      border: none;
+      border: 1px solid #444;
       border-radius: 12px;
-      background-color: #333;
-      color: white;
+      background-color: transparent;
+      color: #e0e0e0;
       font-size: 14px;
       cursor: pointer;
       transition: 0.2s ease;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
     }
 
     button:hover {
-      background-color: #555;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      background-color: #333;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
+      background: #1c1c1c;
       border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
     }
 
     th, td {
       padding: 12px 15px;
       text-align: left;
-      border-bottom: 1px solid #ddd;
+      border-bottom: 1px solid #333;
     }
 
     th {
-      background-color: #2e2e2e;
-      color: white;
+      background-color: #222;
+      color: #f5f5f5;
       text-transform: uppercase;
       font-size: 13px;
       letter-spacing: 0.5px;
     }
 
     tr:hover {
-      background-color: #f1f1f1;
+      background-color: #2a2a2a;
     }
 
     @media (max-width: 600px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-      }
-      th {
-        display: none;
-      }
-      td {
-        position: relative;
-        padding-left: 50%;
-      }
-      td::before {
-        position: absolute;
-        top: 12px;
-        left: 15px;
-        width: 45%;
-        white-space: nowrap;
-        font-weight: bold;
+      .controls {
+        flex-direction: column;
       }
     }
   </style>
@@ -127,33 +124,39 @@
   </header>
 
   <main>
-    <div class="filter-container">
-      <select id="colSelect">
-        <option value="all">All Column</option>
-        <option value="name">Name</option>
-        <option value="department">Department</option>
-        <option value="location">Location</option>
-        <option value="nationality">Nationality</option>
-        <option value="age">Age</option>
-        <option value="joined">Joined</option>
-        <option value="salary">Salary</option>
-      </select>
+    <div class="controls">
+      <div class="filter-container">
+        <select id="colSelect">
+          <option value="all">All Column</option>
+          <option value="name">Name</option>
+          <option value="department">Department</option>
+          <option value="location">Location</option>
+          <option value="nationality">Nationality</option>
+          <option value="age">Age</option>
+          <option value="joined">Joined</option>
+          <option value="salary">Salary</option>
+        </select>
 
-      <input type="text" id="searchInput" placeholder="Search..." />
-      <button id="resetBtn">Reset</button>
+        <select id="nameFilter"></select>
+        <select id="departmentFilter"></select>
+        <select id="locationFilter"></select>
+        <select id="nationalityFilter"></select>
+        <select id="ageFilter"></select>
+        <select id="joinedFilter"></select>
+        <select id="salaryFilter"></select>
+      </div>
 
-      <select id="nameFilter"></select>
-      <select id="departmentFilter"></select>
-      <select id="locationFilter"></select>
-      <select id="nationalityFilter"></select>
-      <select id="ageFilter"></select>
-      <select id="joinedFilter"></select>
-      <select id="salaryFilter"></select>
+      <div class="action-buttons">
+        <input type="text" id="searchInput" placeholder="Search..." />
+        <button id="resetBtn">Reset</button>
+        <button id="deleteBtn">Delete</button>
+      </div>
     </div>
 
     <table id="dataTable">
       <thead>
         <tr>
+          <th></th>
           <th>Name</th>
           <th>Department</th>
           <th>Location</th>
@@ -177,11 +180,11 @@
     ];
 
     const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
-
     const tableBody = document.querySelector("#dataTable tbody");
     const colSelect = document.getElementById("colSelect");
     const searchInput = document.getElementById("searchInput");
     const resetBtn = document.getElementById("resetBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
 
     const filters = {
       name: document.getElementById("nameFilter"),
@@ -193,11 +196,19 @@
       salary: document.getElementById("salaryFilter"),
     };
 
-    // Populate table
+    let currentData = [...sampleData];
+
     function renderTable(data) {
       tableBody.innerHTML = "";
-      data.forEach((item) => {
+      data.forEach((item, index) => {
         const row = document.createElement("tr");
+        const checkboxCell = document.createElement("td");
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.dataset.index = index;
+        checkboxCell.appendChild(checkbox);
+        row.appendChild(checkboxCell);
+
         dataKeys.forEach((key) => {
           const cell = document.createElement("td");
           cell.textContent = item[key];
@@ -207,7 +218,6 @@
       });
     }
 
-    // Initialize filters
     function initFilters() {
       Object.entries(filters).forEach(([key, select]) => {
         const values = [...new Set(sampleData.map((d) => d[key]))];
@@ -222,7 +232,6 @@
       });
     }
 
-    // Apply filters and search
     function applyFilters() {
       let filtered = [...sampleData];
       Object.entries(filters).forEach(([key, select]) => {
@@ -240,21 +249,28 @@
           }
         });
       }
+      currentData = filtered;
       renderTable(filtered);
     }
 
-    // Reset filters
     resetBtn.addEventListener("click", () => {
       searchInput.value = "";
       colSelect.value = "all";
       Object.values(filters).forEach((select) => (select.value = "all"));
+      currentData = [...sampleData];
       renderTable(sampleData);
+    });
+
+    deleteBtn.addEventListener("click", () => {
+      const checked = [...document.querySelectorAll("tbody input[type='checkbox']:checked")];
+      const indexesToDelete = checked.map(c => Number(c.dataset.index));
+      currentData = currentData.filter((_, i) => !indexesToDelete.includes(i));
+      renderTable(currentData);
     });
 
     searchInput.addEventListener("input", applyFilters);
     colSelect.addEventListener("change", applyFilters);
 
-    // Initialize
     initFilters();
     renderTable(sampleData);
   </script>
