@@ -1,283 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Data Tables</title>
-  <style>
-    :root {
-      --bg: #f6f6f6;
-      --card: #ffffff;
-      --text: #222;
-      --accent: #555;
-      --border: #ddd;
-      --hover: #f0f0f0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Tables</title>
+<style>
+  body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #222;
+    margin: 0;
+    padding: 0;
+  }
 
-    body {
-      font-family: "Inter", "Segoe UI", Tahoma, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-    }
+  header {
+    text-align: center;
+    padding: 30px 0 10px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+  }
 
-    header {
-      background-color: #1a1a1a;
-      color: #fff;
-      padding: 25px 0;
-      text-align: center;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    }
+  header h1 {
+    font-size: 2em;
+    font-weight: 600;
+    color: #111;
+    margin: 0;
+  }
 
-    header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      position: relative;
-      display: inline-block;
-    }
+  .filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    background-color: #fff;
+    padding: 15px 25px;
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+    width: 90%;
+    max-width: 1200px;
+  }
 
-    header h1::after {
-      content: "";
-      display: block;
-      height: 2px;
-      width: 50%;
-      background: #888;
-      margin: 10px auto 0;
-      border-radius: 2px;
-    }
+  .filters-left {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
 
-    main {
-      padding: 40px;
-      max-width: 1200px;
-      margin: auto;
-    }
+  .filters-left select,
+  .filters-left input {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95em;
+    transition: all 0.2s ease;
+  }
 
-    .filter-card {
-      background-color: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 25px;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
-    }
+  .filters-left select:focus,
+  .filters-left input:focus {
+    border-color: #4a6fa5;
+    outline: none;
+    box-shadow: 0 0 4px rgba(74, 111, 165, 0.3);
+  }
 
-    .filter-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-    }
+  .buttons-right {
+    display: flex;
+    gap: 10px;
+  }
 
-    select, input {
-      padding: 10px 12px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      font-size: 14px;
-      background-color: #fff;
-      transition: all 0.25s ease;
-    }
+  .buttons-right button {
+    background-color: #e0e0e0;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.95em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
 
-    select:focus, input:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px rgba(90, 90, 90, 0.1);
-    }
+  .buttons-right button:hover {
+    background-color: #4a6fa5;
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(74, 111, 165, 0.3);
+  }
 
-    button {
-      background-color: #222;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 14px;
-      transition: all 0.25s ease;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-    }
+  table {
+    width: 90%;
+    margin: 0 auto 40px;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
 
-    button:hover {
-      background-color: #444;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    }
+  th, td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: var(--card);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-    }
+  th {
+    background-color: #f0f0f0;
+    font-weight: 600;
+  }
 
-    th, td {
-      padding: 14px 16px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    th {
-      background-color: #222;
-      color: white;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-      font-size: 13px;
-      text-transform: uppercase;
-    }
-
-    tr:nth-child(even) {
-      background-color: #fafafa;
-    }
-
-    tr:hover {
-      background-color: var(--hover);
-      transition: 0.2s ease;
-    }
-
-    @media (max-width: 700px) {
-      main {
-        padding: 20px;
-      }
-      .filter-container {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  tr:hover {
+    background-color: #fafafa;
+  }
+</style>
 </head>
 <body>
   <header>
     <h1>Data Tables</h1>
   </header>
 
-  <main>
-    <div class="filter-card">
-      <div class="filter-container">
-        <select id="colSelect">
-          <option value="all">All Column</option>
-          <option value="name">Name</option>
-          <option value="department">Department</option>
-          <option value="location">Location</option>
-          <option value="nationality">Nationality</option>
-          <option value="age">Age</option>
-          <option value="joined">Joined</option>
-          <option value="salary">Salary</option>
-        </select>
-
-        <input type="text" id="searchInput" placeholder="Search..." />
-        <button id="resetBtn">Reset</button>
-
-        <select id="nameFilter"></select>
-        <select id="departmentFilter"></select>
-        <select id="locationFilter"></select>
-        <select id="nationalityFilter"></select>
-        <select id="ageFilter"></select>
-        <select id="joinedFilter"></select>
-        <select id="salaryFilter"></select>
-      </div>
+  <div class="filter-container">
+    <div class="filters-left">
+      <select id="nameFilter"><option>All Name</option></select>
+      <select id="departmentFilter"><option>All Department</option></select>
+      <select id="locationFilter"><option>All Location</option></select>
+      <select id="nationalityFilter"><option>All Nationality</option></select>
+      <select id="ageFilter"><option>All Age</option></select>
+      <select id="joinedFilter"><option>All Joined</option></select>
+      <select id="salaryFilter"><option>All Salary</option></select>
+      <input type="text" id="searchInput" placeholder="Search...">
     </div>
 
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Department</th>
-          <th>Location</th>
-          <th>Nationality</th>
-          <th>Age</th>
-          <th>Joined</th>
-          <th>Salary</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </main>
+    <div class="buttons-right">
+      <button id="searchBtn">Search</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+  </div>
 
-  <script>
-    const sampleData = [
-      { name: "John Smith", department: "IT", location: "New York", nationality: "American", age: 28, joined: "2019", salary: 50000 },
-      { name: "Maria Lopez", department: "HR", location: "Madrid", nationality: "Spanish", age: 35, joined: "2020", salary: 55000 },
-      { name: "Ahmed Khan", department: "Finance", location: "Dubai", nationality: "Emirati", age: 30, joined: "2018", salary: 60000 },
-      { name: "Sakura Tanaka", department: "Design", location: "Tokyo", nationality: "Japanese", age: 26, joined: "2021", salary: 48000 },
-      { name: "Miguel Santos", department: "Marketing", location: "Manila", nationality: "Filipino", age: 31, joined: "2022", salary: 52000 }
-    ];
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Location</th>
+        <th>Nationality</th>
+        <th>Age</th>
+        <th>Joined</th>
+        <th>Salary</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>John Smith</td><td>Finance</td><td>London</td><td>British</td><td>34</td><td>2018</td><td>$60,000</td></tr>
+      <tr><td>Maria Lopez</td><td>HR</td><td>Madrid</td><td>Spanish</td><td>28</td><td>2019</td><td>$50,000</td></tr>
+      <tr><td>Ahmed Khan</td><td>IT</td><td>Dubai</td><td>Emirati</td><td>40</td><td>2015</td><td>$75,000</td></tr>
+      <tr><td>Sakura Tanaka</td><td>Design</td><td>Tokyo</td><td>Japanese</td><td>31</td><td>2020</td><td>$65,000</td></tr>
+      <tr><td>Miguel Santos</td><td>Marketing</td><td>Manila</td><td>Filipino</td><td>29</td><td>2021</td><td>$55,000</td></tr>
+    </tbody>
+  </table>
 
-    const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
-    const tableBody = document.querySelector("#dataTable tbody");
-    const colSelect = document.getElementById("colSelect");
-    const searchInput = document.getElementById("searchInput");
-    const resetBtn = document.getElementById("resetBtn");
+<script>
+  const sampleData = [
+    { name: "John Smith", department: "Finance", location: "London", nationality: "British", age: 34, joined: 2018, salary: "$60,000" },
+    { name: "Maria Lopez", department: "HR", location: "Madrid", nationality: "Spanish", age: 28, joined: 2019, salary: "$50,000" },
+    { name: "Ahmed Khan", department: "IT", location: "Dubai", nationality: "Emirati", age: 40, joined: 2015, salary: "$75,000" },
+    { name: "Sakura Tanaka", department: "Design", location: "Tokyo", nationality: "Japanese", age: 31, joined: 2020, salary: "$65,000" },
+    { name: "Miguel Santos", department: "Marketing", location: "Manila", nationality: "Filipino", age: 29, joined: 2021, salary: "$55,000" }
+  ];
 
-    const filters = {
-      name: document.getElementById("nameFilter"),
-      department: document.getElementById("departmentFilter"),
-      location: document.getElementById("locationFilter"),
-      nationality: document.getElementById("nationalityFilter"),
-      age: document.getElementById("ageFilter"),
-      joined: document.getElementById("joinedFilter"),
-      salary: document.getElementById("salaryFilter"),
-    };
+  const filters = {
+    name: document.getElementById("nameFilter"),
+    department: document.getElementById("departmentFilter"),
+    location: document.getElementById("locationFilter"),
+    nationality: document.getElementById("nationalityFilter"),
+    age: document.getElementById("ageFilter"),
+    joined: document.getElementById("joinedFilter"),
+    salary: document.getElementById("salaryFilter"),
+  };
 
-    function renderTable(data) {
-      tableBody.innerHTML = "";
-      data.forEach((item) => {
-        const row = document.createElement("tr");
-        dataKeys.forEach((key) => {
-          const cell = document.createElement("td");
-          cell.textContent = item[key];
-          row.appendChild(cell);
-        });
-        tableBody.appendChild(row);
-      });
-    }
+  const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
 
-    function initFilters() {
-      Object.entries(filters).forEach(([key, select]) => {
-        const values = [...new Set(sampleData.map((d) => d[key]))];
-        select.innerHTML = `<option value="all">All ${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
-        values.forEach((v) => {
-          const opt = document.createElement("option");
-          opt.value = v;
-          opt.textContent = v;
-          select.appendChild(opt);
-        });
-        select.addEventListener("change", applyFilters);
-      });
-    }
-
-    function applyFilters() {
-      let filtered = [...sampleData];
-      Object.entries(filters).forEach(([key, select]) => {
-        if (select.value !== "all") {
-          filtered = filtered.filter((d) => String(d[key]) === select.value);
-        }
-      });
-
-      const searchVal = searchInput.value.toLowerCase();
-      if (searchVal) {
-        filtered = filtered.filter((d) => {
-          if (colSelect.value === "all") {
-            return Object.values(d).some((v) => String(v).toLowerCase().includes(searchVal));
-          } else {
-            return String(d[colSelect.value]).toLowerCase().includes(searchVal);
-          }
-        });
-      }
-      renderTable(filtered);
-    }
-
-    resetBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      colSelect.value = "all";
-      Object.values(filters).forEach((select) => (select.value = "all"));
-      renderTable(sampleData);
+  // Populate dropdowns
+  dataKeys.forEach((key) => {
+    const select = filters[key];
+    const uniqueValues = [...new Set(sampleData.map((d) => d[key]))];
+    uniqueValues.forEach((val) => {
+      const opt = document.createElement("option");
+      opt.textContent = val;
+      select.appendChild(opt);
     });
+  });
 
-    searchInput.addEventListener("input", applyFilters);
-    colSelect.addEventListener("change", applyFilters);
+  const tableBody = document.querySelector("#dataTable tbody");
 
-    initFilters();
+  function renderTable(data) {
+    tableBody.innerHTML = "";
+    data.forEach((row) => {
+      const tr = document.createElement("tr");
+      dataKeys.forEach((key) => {
+        const td = document.createElement("td");
+        td.textContent = row[key];
+        tr.appendChild(td);
+      });
+      tableBody.appendChild(tr);
+    });
+  }
+
+  function filterData() {
+    const search = document.getElementById("searchInput").value.toLowerCase();
+    let filtered = sampleData.filter((row) => {
+      return dataKeys.every((key) => {
+        const filterVal = filters[key].value;
+        if (filterVal.startsWith("All")) return true;
+        return String(row[key]).toLowerCase() === filterVal.toLowerCase();
+      });
+    });
+    if (search) {
+      filtered = filtered.filter((row) =>
+        dataKeys.some((key) =>
+          String(row[key]).toLowerCase().includes(search)
+        )
+      );
+    }
+    renderTable(filtered);
+  }
+
+  document.getElementById("searchBtn").addEventListener("click", filterData);
+  document.getElementById("resetBtn").addEventListener("click", () => {
+    Object.values(filters).forEach((f) => (f.selectedIndex = 0));
+    document.getElementById("searchInput").value = "";
     renderTable(sampleData);
-  </script>
+  });
+
+  renderTable(sampleData);
+</script>
 </body>
 </html>
