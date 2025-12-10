@@ -1,278 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dark Data Table</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #121212;
-      color: #e0e0e0;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Data Tables</title>
 
-    header {
-      background-color: #1c1c1c;
-      color: #f5f5f5;
-      padding: 20px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
+<style>
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+}
 
-    h1 {
-      margin: 0;
-      font-weight: 500;
-      letter-spacing: 0.5px;
-    }
+header {
+  background-color: #1c1c1c;
+  color: #f5f5f5;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
 
-    main {
-      padding: 30px;
-      max-width: 1200px;
-      margin: auto;
-    }
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
 
-    .controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 25px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+.filter-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 25px;
+  flex: 1;
+  min-width: 300px;
+}
 
-    .filter-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 12px;
-      flex: 1;
-      min-width: 300px;
-    }
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
 
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-    }
+select {
+  padding: 8px 10px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  background: #1e1e1e;
+  color: #e0e0e0;
+  font-size: 14px;
+}
 
-    select, input {
-      padding: 8px 10px;
-      border: 1px solid #333;
-      border-radius: 10px;
-      background: #1e1e1e;
-      color: #e0e0e0;
-      font-size: 14px;
-      transition: 0.2s;
-    }
-
-    select:hover, input:hover {
-      border-color: #888;
-    }
-
-    button {
-      padding: 10px 16px;
-      border: 1px solid #444;
-      border-radius: 12px;
-      background-color: transparent;
-      color: #e0e0e0;
-      font-size: 14px;
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    button:hover {
-      background-color: #333;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #1c1c1c;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-    }
-
-    th, td {
-      padding: 12px 15px;
-      text-align: left;
-      border-bottom: 1px solid #333;
-    }
-
-    th {
-      background-color: #222;
-      color: #f5f5f5;
-      text-transform: uppercase;
-      font-size: 13px;
-      letter-spacing: 0.5px;
-    }
-
-    tr:hover {
-      background-color: #2a2a2a;
-    }
-
-    @media (max-width: 600px) {
-      .controls {
-        flex-direction: column;
-      }
-    }
-  </style>
+button {
+  padding: 10px 16px;
+  border: 1px solid #444;
+  border-radius: 12px;
+  background-color: transparent;
+  color: #e0e0e0;
+  font-size: 14px;
+  cursor: pointer;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #1c1c1c;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+}
+th, td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #333;
+}
+th {
+  background-color: #222;
+  color: #f5f5f5;
+  text-transform: uppercase;
+}
+tr:hover {
+  background-color: #2a2a2a;
+}
+</style>
 </head>
+
 <body>
-  <header>
-    <h1>Data Tables</h1>
-  </header>
+<header>
+  <h1>Data Tables</h1>
+</header>
 
-  <main>
-    <div class="controls">
-      <div class="filter-container">
-        <select id="colSelect">
-          <option value="all">All Column</option>
-          <option value="name">Name</option>
-          <option value="department">Department</option>
-          <option value="location">Location</option>
-          <option value="nationality">Nationality</option>
-          <option value="age">Age</option>
-          <option value="joined">Joined</option>
-          <option value="salary">Salary</option>
-        </select>
+<main>
+<div class="controls">
+  <div class="filter-container">
+    <select id="colSelect">
+      <option value="all">All Column</option>
+      <option value="name">Name</option>
+      <option value="department">Department</option>
+      <option value="location">Location</option>
+      <option value="nationality">Nationality</option>
+      <option value="age">Age</option>
+      <option value="joined">Joined</option>
+      <option value="salary">Salary</option>
+    </select>
 
-        <select id="nameFilter"></select>
-        <select id="departmentFilter"></select>
-        <select id="locationFilter"></select>
-        <select id="nationalityFilter"></select>
-        <select id="ageFilter"></select>
-        <select id="joinedFilter"></select>
-        <select id="salaryFilter"></select>
-      </div>
+    <select id="nameFilter"></select>
+    <select id="departmentFilter"></select>
+    <select id="locationFilter"></select>
+    <select id="nationalityFilter"></select>
+    <select id="ageFilter"></select>
+    <select id="joinedFilter"></select>
+    <select id="salaryFilter"></select>
+  </div>
 
-      <div class="action-buttons">
-        <input type="text" id="searchInput" placeholder="Search..." />
-        <button id="resetBtn">Reset</button>
-        <button id="deleteBtn">Delete</button>
-      </div>
-    </div>
+  <div class="action-buttons">
+    <button id="resetBtn">Reset</button>
+    <button id="deleteBtn">Delete</button>
+  </div>
+</div>
 
-    <table id="dataTable">
-      <thead>
-        <tr>
-          <th></th>
-          <th>Name</th>
-          <th>Department</th>
-          <th>Location</th>
-          <th>Nationality</th>
-          <th>Age</th>
-          <th>Joined</th>
-          <th>Salary</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </main>
+<table id="dataTable">
+<thead>
+<tr>
+  <th></th>
+  <th>Name</th>
+  <th>Department</th>
+  <th>Location</th>
+  <th>Nationality</th>
+  <th>Age</th>
+  <th>Joined</th>
+  <th>Salary</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 
-  <script>
-    const sampleData = [
-      { name: "John Smith", department: "IT", location: "New York", nationality: "American", age: 28, joined: "2019", salary: 50000 },
-      { name: "Maria Lopez", department: "HR", location: "Madrid", nationality: "Spanish", age: 35, joined: "2020", salary: 55000 },
-      { name: "Ahmed Khan", department: "Finance", location: "Dubai", nationality: "Emirati", age: 30, joined: "2018", salary: 60000 },
-      { name: "Sakura Tanaka", department: "Design", location: "Tokyo", nationality: "Japanese", age: 26, joined: "2021", salary: 48000 },
-      { name: "Miguel Santos", department: "Marketing", location: "Manila", nationality: "Filipino", age: 31, joined: "2022", salary: 52000 }
-    ];
+<script>
+const sampleData = [
+  { name: "Alice", department: "IT", location: "NY", nationality: "USA", age: 28, joined: 2020, salary: 50000 },
+  { name: "Bob", department: "HR", location: "LA", nationality: "USA", age: 34, joined: 2018, salary: 60000 },
+];
 
-    const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
-    const tableBody = document.querySelector("#dataTable tbody");
-    const colSelect = document.getElementById("colSelect");
-    const searchInput = document.getElementById("searchInput");
-    const resetBtn = document.getElementById("resetBtn");
-    const deleteBtn = document.getElementById("deleteBtn");
+const dataKeys = ["name", "department", "location", "nationality", "age", "joined", "salary"];
 
-    const filters = {
-      name: document.getElementById("nameFilter"),
-      department: document.getElementById("departmentFilter"),
-      location: document.getElementById("locationFilter"),
-      nationality: document.getElementById("nationalityFilter"),
-      age: document.getElementById("ageFilter"),
-      joined: document.getElementById("joinedFilter"),
-      salary: document.getElementById("salaryFilter"),
-    };
+const tableBody = document.querySelector("#dataTable tbody");
+const colSelect = document.getElementById("colSelect");
+const resetBtn = document.getElementById("resetBtn");
+const deleteBtn = document.getElementById("deleteBtn");
 
-    let currentData = [...sampleData];
+const filters = {
+  name: document.getElementById("nameFilter"),
+  department: document.getElementById("departmentFilter"),
+  location: document.getElementById("locationFilter"),
+  nationality: document.getElementById("nationalityFilter"),
+  age: document.getElementById("ageFilter"),
+  joined: document.getElementById("joinedFilter"),
+  salary: document.getElementById("salaryFilter"),
+};
 
-    function renderTable(data) {
-      tableBody.innerHTML = "";
-      data.forEach((item, index) => {
-        const row = document.createElement("tr");
-        const checkboxCell = document.createElement("td");
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.dataset.index = index;
-        checkboxCell.appendChild(checkbox);
-        row.appendChild(checkboxCell);
+let currentData = [...sampleData];
 
-        dataKeys.forEach((key) => {
-          const cell = document.createElement("td");
-          cell.textContent = item[key];
-          row.appendChild(cell);
-        });
-        tableBody.appendChild(row);
-      });
-    }
+function renderTable(data) {
+  tableBody.innerHTML = "";
+  data.forEach((item, index) => {
+    const row = document.createElement("tr");
 
-    function initFilters() {
-      Object.entries(filters).forEach(([key, select]) => {
-        const values = [...new Set(sampleData.map((d) => d[key]))];
-        select.innerHTML = `<option value="all">All ${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
-        values.forEach((v) => {
-          const opt = document.createElement("option");
-          opt.value = v;
-          opt.textContent = v;
-          select.appendChild(opt);
-        });
-        select.addEventListener("change", applyFilters);
-      });
-    }
+    const checkboxCell = document.createElement("td");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.dataset.index = index;
+    checkboxCell.appendChild(checkbox);
+    row.appendChild(checkboxCell);
 
-    function applyFilters() {
-      let filtered = [...sampleData];
-      Object.entries(filters).forEach(([key, select]) => {
-        if (select.value !== "all") {
-          filtered = filtered.filter((d) => String(d[key]) === select.value);
-        }
-      });
-      const searchVal = searchInput.value.toLowerCase();
-      if (searchVal) {
-        filtered = filtered.filter((d) => {
-          if (colSelect.value === "all") {
-            return Object.values(d).some((v) => String(v).toLowerCase().includes(searchVal));
-          } else {
-            return String(d[colSelect.value]).toLowerCase().includes(searchVal);
-          }
-        });
-      }
-      currentData = filtered;
-      renderTable(filtered);
-    }
-
-    resetBtn.addEventListener("click", () => {
-      searchInput.value = "";
-      colSelect.value = "all";
-      Object.values(filters).forEach((select) => (select.value = "all"));
-      currentData = [...sampleData];
-      renderTable(sampleData);
+    dataKeys.forEach((key) => {
+      const cell = document.createElement("td");
+      cell.textContent = item[key];
+      row.appendChild(cell);
     });
 
-    deleteBtn.addEventListener("click", () => {
-      const checked = [...document.querySelectorAll("tbody input[type='checkbox']:checked")];
-      const indexesToDelete = checked.map(c => Number(c.dataset.index));
-      currentData = currentData.filter((_, i) => !indexesToDelete.includes(i));
-      renderTable(currentData);
+    tableBody.appendChild(row);
+  });
+}
+
+function initFilters() {
+  Object.entries(filters).forEach(([key, select]) => {
+    const values = [...new Set(sampleData.map((d) => d[key]))];
+    select.innerHTML = `<option value="all">All</option>`;
+    values.forEach((val) => {
+      select.innerHTML += `<option value="${val}">${val}</option>`;
     });
+  });
+}
 
-    searchInput.addEventListener("input", applyFilters);
-    colSelect.addEventListener("change", applyFilters);
+function applyFilters() {
+  let filtered = [...sampleData];
 
-    initFilters();
-    renderTable(sampleData);
-  </script>
+  Object.entries(filters).forEach(([key, select]) => {
+    if (select.value !== "all") {
+      filtered = filtered.filter((d) => d[key] == select.value);
+    }
+  });
+
+  currentData = filtered;
+  renderTable(filtered);
+}
+
+resetBtn.addEventListener("click", () => {
+  Object.values(filters).forEach((select) => (select.value = "all"));
+  colSelect.value = "all";
+  currentData = [...sampleData];
+  renderTable(sampleData);
+});
+
+deleteBtn.addEventListener("click", () => {
+  const checked = [...document.querySelectorAll("tbody input[type='checkbox']:checked")];
+  const indexesToDelete = checked.map(c => Number(c.dataset.index));
+  currentData = currentData.filter((_, i) => !indexesToDelete.includes(i));
+  renderTable(currentData);
+});
+
+Object.values(filters).forEach((f) => f.addEventListener("change", applyFilters));
+
+initFilters();
+renderTable(sampleData);
+</script>
+</main>
 </body>
-</html>
