@@ -100,19 +100,8 @@
             background: #f8f9fa;
         }
 
-        /* Column Search Inputs */
-        .search-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 10px;
-        }
-
-        .search-input-group input {
-            font-size: 0.85rem;
-            border-radius: 6px;
-        }
-
         /* DataTables Custom Layout Styles */
+        
         /* 1. Pagination Top Middle */
         .top-pagination-container {
             display: flex;
@@ -127,6 +116,13 @@
             align-items: flex-start;
             margin-top: 1rem;
             gap: 0.5rem;
+        }
+        
+        /* Customizing the Length Menu select */
+        .dataTables_length select {
+            padding: 4px 24px 4px 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
         }
 
         /* Table Styling */
@@ -172,13 +168,9 @@
             <div class="tab-pane fade show active" id="tab1" role="tabpanel">
                 
                 <div class="controls-section">
-                    <div class="mb-3">
+                    <div>
                         <span class="section-label">Show/Hide Columns</span>
                         <div id="colVis1"></div>
-                    </div>
-                    <div>
-                        <span class="section-label">Column Search (Type to filter)</span>
-                        <div class="search-grid" id="colSearch1"></div>
                     </div>
                 </div>
 
@@ -207,13 +199,9 @@
             <div class="tab-pane fade" id="tab2" role="tabpanel">
                 
                 <div class="controls-section">
-                    <div class="mb-3">
+                    <div>
                         <span class="section-label">Show/Hide Columns</span>
                         <div id="colVis2"></div>
-                    </div>
-                    <div>
-                        <span class="section-label">Column Search (Type to filter)</span>
-                        <div class="search-grid" id="colSearch2"></div>
                     </div>
                 </div>
 
@@ -267,12 +255,13 @@
         { name: "Tatyana Fitzpatrick", position: "Regional Director", office: "London", nationality: "British", age: 19, startDate: "2010/03/17", salary: "$385,750" }
     ];
 
-    function initDataTable(tableId, visId, searchId, selectAllId, deleteBtnId, countId) {
+    function initDataTable(tableId, visId, selectAllId, deleteBtnId, countId) {
         let selectedRows = new Set();
         
-        // 1. Initialize DataTable with specific Layout requirements
+        // 1. Initialize DataTable
         const table = $(`#${tableId}`).DataTable({
             data: dataset,
+            searching: false, // Explicitly disable searching feature
             columns: [
                 { 
                     data: null, 
@@ -290,7 +279,7 @@
                 { data: 'startDate', title: 'Start Date' },
                 { data: 'salary', title: 'Salary' }
             ],
-            // DOM LAYOUT EXPLANATION:
+            // DOM LAYOUT:
             // <"top-pagination-container"p> -> Pagination in top middle
             // t -> The Table
             // <"bottom-left-controls"li> -> Length menu (l) and Info (i) stacked in bottom left
@@ -335,27 +324,7 @@
             $(`#${visId}`).append(btn);
         });
 
-        // 3. Generate Individual Column Search (Input Fields)
-        table.columns().every(function(index) {
-            if(index === 0) return; // Skip checkbox
-
-            const header = this.header();
-            const title = $(header).text();
-            
-            const wrapper = $(`<div class="search-input-group"></div>`);
-            const input = $(`<input type="text" class="form-control" placeholder="${title}">`);
-
-            input.on('keyup change clear', function() {
-                if (table.column(index).search() !== this.value) {
-                    table.column(index).search(this.value).draw();
-                }
-            });
-
-            wrapper.append(input);
-            $(`#${searchId}`).append(wrapper);
-        });
-
-        // 4. Row Selection Logic
+        // 3. Row Selection Logic
         function updateCounter() {
             $(`#${countId}`).text(selectedRows.size);
         }
@@ -398,17 +367,15 @@
             updateCounter();
         });
 
-        // 5. Delete Functionality
+        // 4. Delete Functionality
         $(`#${deleteBtnId}`).on('click', function() {
             if(selectedRows.size === 0) return;
 
             if(confirm(`Delete ${selectedRows.size} rows?`)) {
-                // Convert Set to Array and sort descending to avoid index shifting issues
+                // Convert Set to Array and sort descending
                 const indexes = Array.from(selectedRows).sort((a,b) => b-a);
                 
                 indexes.forEach(idx => {
-                    // Note: In a real scenario with server-side data, you'd use row ids.
-                    // For client-side, we remove by index.
                     table.row(idx).remove();
                 });
                 
@@ -423,8 +390,9 @@
     }
 
     $(document).ready(function() {
-        const table1 = initDataTable('table1', 'colVis1', 'colSearch1', 'selectAll1', 'deleteBtn1', 'count1');
-        const table2 = initDataTable('table2', 'colVis2', 'colSearch2', 'selectAll2', 'deleteBtn2', 'count2');
+        // Initializing tables without search params
+        const table1 = initDataTable('table1', 'colVis1', 'selectAll1', 'deleteBtn1', 'count1');
+        const table2 = initDataTable('table2', 'colVis2', 'selectAll2', 'deleteBtn2', 'count2');
 
         // Fix column alignment when switching tabs
         $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(){
