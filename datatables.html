@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -27,13 +29,13 @@ header {
   margin-bottom: 25px;
   flex-wrap: wrap;
   gap: 12px;
+  padding: 20px;
 }
 
 .filter-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 12px;
-  margin-bottom: 25px;
   flex: 1;
   min-width: 300px;
 }
@@ -50,6 +52,7 @@ select {
   background: #1e1e1e;
   color: #e0e0e0;
   font-size: 14px;
+  width: 100%;
 }
 
 button {
@@ -61,6 +64,11 @@ button {
   font-size: 14px;
   cursor: pointer;
 }
+
+button:hover {
+  background-color: #333;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -68,18 +76,27 @@ table {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
 }
+
 th, td {
   padding: 12px 15px;
   border-bottom: 1px solid #333;
+  text-align: left;
 }
+
 th {
   background-color: #222;
   color: #f5f5f5;
   text-transform: uppercase;
 }
+
 tr:hover {
   background-color: #2a2a2a;
+}
+
+main {
+    padding: 0 20px;
 }
 </style>
 </head>
@@ -144,6 +161,7 @@ const dataKeys = ["name", "department", "location", "nationality", "age", "joine
 
 const tableBody = document.querySelector("#dataTable tbody");
 const colSelect = document.getElementById("colSelect");
+// Removed searchInput reference
 const resetBtn = document.getElementById("resetBtn");
 const deleteBtn = document.getElementById("deleteBtn");
 
@@ -184,7 +202,7 @@ function renderTable(data) {
 function initFilters() {
   Object.entries(filters).forEach(([key, select]) => {
     const values = [...new Set(sampleData.map((d) => d[key]))];
-    select.innerHTML = `<option value="all">All</option>`;
+    select.innerHTML = `<option value="all">${key.charAt(0).toUpperCase() + key.slice(1)}</option>`;
     values.forEach((val) => {
       select.innerHTML += `<option value="${val}">${val}</option>`;
     });
@@ -194,19 +212,23 @@ function initFilters() {
 function applyFilters() {
   let filtered = [...sampleData];
 
+  // 1. Filter by specific column dropdowns
   Object.entries(filters).forEach(([key, select]) => {
     if (select.value !== "all") {
       filtered = filtered.filter((d) => d[key] == select.value);
     }
   });
 
+  // Removed searchInput filtering logic block here
+
   currentData = filtered;
   renderTable(filtered);
 }
 
 resetBtn.addEventListener("click", () => {
-  Object.values(filters).forEach((select) => (select.value = "all"));
+  // Removed searchInput.value reset
   colSelect.value = "all";
+  Object.values(filters).forEach((select) => (select.value = "all"));
   currentData = [...sampleData];
   renderTable(sampleData);
 });
@@ -214,10 +236,13 @@ resetBtn.addEventListener("click", () => {
 deleteBtn.addEventListener("click", () => {
   const checked = [...document.querySelectorAll("tbody input[type='checkbox']:checked")];
   const indexesToDelete = checked.map(c => Number(c.dataset.index));
+  // Filter out the items that match the checked indexes
   currentData = currentData.filter((_, i) => !indexesToDelete.includes(i));
   renderTable(currentData);
 });
 
+// Removed searchInput event listener
+colSelect.addEventListener("change", applyFilters);
 Object.values(filters).forEach((f) => f.addEventListener("change", applyFilters));
 
 initFilters();
@@ -225,3 +250,4 @@ renderTable(sampleData);
 </script>
 </main>
 </body>
+</html>
