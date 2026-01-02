@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataTables Custom Layout</title>
+    <title>DataTables Custom Layout - Final</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
@@ -29,33 +29,7 @@
             padding: 1.5rem 2rem 0;
         }
 
-        /* Tabs Styling */
-        .nav-tabs {
-            border-bottom: none;
-        }
-        
-        .nav-tabs .nav-link {
-            border: none;
-            color: #6c757d;
-            font-weight: 500;
-            padding: 10px 20px;
-            border-bottom: 3px solid transparent;
-        }
-
-        .nav-tabs .nav-link:hover {
-            color: #0d6efd;
-            border-color: transparent;
-        }
-
-        .nav-tabs .nav-link.active {
-            color: #0d6efd;
-            background: transparent;
-            border-bottom: 3px solid #0d6efd;
-        }
-
-        .tab-content {
-            padding: 2rem;
-        }
+        .tab-content { padding: 2rem; }
 
         /* Controls Section */
         .controls-section {
@@ -85,66 +59,40 @@
             padding: 5px 12px;
             border: 1px solid #dee2e6;
             background: white;
-            color: #495057;
             transition: all 0.2s;
         }
 
-        .btn-toggle-col:hover, .btn-toggle-col.active-col {
-            background-color: #e7f1ff;
-            color: #0d6efd;
-            border-color: #0d6efd;
-        }
+        .active-col { background-color: #e7f1ff; color: #0d6efd; border-color: #0d6efd; }
+        .inactive-col { opacity: 0.6; background: #f8f9fa; }
 
-        .btn-toggle-col.inactive-col {
-            opacity: 0.6;
-            background: #f8f9fa;
-        }
-
-        /* DataTables Custom Layout Styles */
-        
-        /* 1. Pagination Top Middle */
+        /* Layout Positioning */
         .top-pagination-container {
             display: flex;
             justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        /* 2. Length (Entries per page) Lower Left */
         .bottom-left-controls {
             display: flex;
-            flex-direction: column; /* Stack vertically */
+            flex-direction: column;
             align-items: flex-start;
             margin-top: 1rem;
-            gap: 0.5rem;
-        }
-        
-        /* Customizing the Length Menu select */
-        .dataTables_length select {
-            padding: 4px 24px 4px 8px;
-            border: 1px solid #dee2e6;
-            border-radius: 4px;
+            gap: 0.25rem;
         }
 
-        /* Table Styling */
+        /* Column Search Input Styling */
+        .column-search-row input {
+            width: 100%;
+            font-size: 0.8rem;
+            padding: 4px 8px;
+        }
+
         table.dataTable thead th {
             background-color: #212529;
             color: white;
-            font-weight: 500;
-            padding: 12px;
         }
 
-        table.dataTable tbody tr.selected {
-            background-color: rgba(13, 110, 253, 0.1) !important;
-        }
-
-        .btn-delete {
-            margin-top: 1rem;
-        }
-
-        /* Checkbox alignment */
-        .select-checkbox {
-            text-align: center;
-        }
+        .selected { background-color: rgba(13, 110, 253, 0.1) !important; }
     </style>
 </head>
 <body>
@@ -153,38 +101,28 @@
     <div class="main-card">
         <div class="card-header-custom">
             <h3 class="mb-4">Data Management</h3>
-            
             <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab">Employee List A</button>
+                <li class="nav-item">
+                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button">Employee List A</button>
                 </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button" role="tab">Employee List B</button>
+                <li class="nav-item">
+                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button">Employee List B</button>
                 </li>
             </ul>
         </div>
 
         <div class="tab-content">
             <div class="tab-pane fade show active" id="tab1" role="tabpanel">
-                
                 <div class="controls-section">
-                    <div>
-                        <span class="section-label">Show/Hide Columns</span>
-                        <div id="colVis1"></div>
-                    </div>
+                    <span class="section-label">Show/Hide Columns</span>
+                    <div id="colVis1"></div>
                 </div>
 
                 <table id="table1" class="table table-striped table-hover w-100">
                     <thead>
                         <tr>
                             <th style="width: 30px;"><input type="checkbox" class="form-check-input" id="selectAll1"></th>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Nationality</th>
-                            <th>Age</th>
-                            <th>Start Date</th>
-                            <th>Salary</th>
+                            <th>Name</th><th>Position</th><th>Office</th><th>Nationality</th><th>Age</th><th>Start Date</th><th>Salary</th>
                         </tr>
                     </thead>
                 </table>
@@ -197,25 +135,16 @@
             </div>
 
             <div class="tab-pane fade" id="tab2" role="tabpanel">
-                
                 <div class="controls-section">
-                    <div>
-                        <span class="section-label">Show/Hide Columns</span>
-                        <div id="colVis2"></div>
-                    </div>
+                    <span class="section-label">Show/Hide Columns</span>
+                    <div id="colVis2"></div>
                 </div>
 
                 <table id="table2" class="table table-striped table-hover w-100">
                     <thead>
                         <tr>
                             <th style="width: 30px;"><input type="checkbox" class="form-check-input" id="selectAll2"></th>
-                            <th>Name</th>
-                            <th>Position</th>
-                            <th>Office</th>
-                            <th>Nationality</th>
-                            <th>Age</th>
-                            <th>Start Date</th>
-                            <th>Salary</th>
+                            <th>Name</th><th>Position</th><th>Office</th><th>Nationality</th><th>Age</th><th>Start Date</th><th>Salary</th>
                         </tr>
                     </thead>
                 </table>
@@ -236,7 +165,6 @@
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
-    // Sample Data
     const dataset = [
         { name: "Tiger Nixon", position: "System Architect", office: "Edinburgh", nationality: "Scottish", age: 61, startDate: "2011/04/25", salary: "$320,800" },
         { name: "Garrett Winters", position: "Accountant", office: "Tokyo", nationality: "Japanese", age: 63, startDate: "2011/07/25", salary: "$170,750" },
@@ -247,141 +175,91 @@
         { name: "Herrod Chandler", position: "Sales Assistant", office: "San Francisco", nationality: "American", age: 59, startDate: "2012/08/06", salary: "$137,500" },
         { name: "Rhona Davidson", position: "Integration Specialist", office: "Tokyo", nationality: "Japanese", age: 55, startDate: "2010/10/14", salary: "$327,900" },
         { name: "Colleen Hurst", position: "Javascript Developer", office: "San Francisco", nationality: "American", age: 39, startDate: "2009/09/15", salary: "$205,500" },
-        { name: "Sonya Frost", position: "Software Engineer", office: "Edinburgh", nationality: "Scottish", age: 23, startDate: "2008/12/13", salary: "$103,600" },
-        { name: "Jena Gaines", position: "Office Manager", office: "London", nationality: "British", age: 30, startDate: "2008/12/19", salary: "$90,560" },
-        { name: "Quinn Flynn", position: "Support Lead", office: "Edinburgh", nationality: "Scottish", age: 22, startDate: "2013/03/03", salary: "$342,000" },
-        { name: "Charde Marshall", position: "Regional Director", office: "San Francisco", nationality: "American", age: 36, startDate: "2008/10/16", salary: "$470,600" },
-        { name: "Haley Kennedy", position: "Senior Marketing Designer", office: "London", nationality: "British", age: 43, startDate: "2012/12/18", salary: "$313,500" },
-        { name: "Tatyana Fitzpatrick", position: "Regional Director", office: "London", nationality: "British", age: 19, startDate: "2010/03/17", salary: "$385,750" }
+        { name: "Sonya Frost", position: "Software Engineer", office: "Edinburgh", nationality: "Scottish", age: 23, startDate: "2008/12/13", salary: "$103,600" }
     ];
 
     function initDataTable(tableId, visId, selectAllId, deleteBtnId, countId) {
         let selectedRows = new Set();
-        
-        // 1. Initialize DataTable
-        const table = $(`#${tableId}`).DataTable({
+        const $tableEl = $(`#${tableId}`);
+
+        // Requirement 4: Add individual column search inputs
+        $tableEl.find('thead tr').clone(true).addClass('column-search-row').appendTo($tableEl.find('thead'));
+        $tableEl.find('thead tr:eq(1) th').each(function (i) {
+            if (i === 0) { $(this).html(''); return; }
+            $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter..." />');
+        });
+
+        const table = $tableEl.DataTable({
             data: dataset,
-            searching: false, // Explicitly disable searching feature
+            searching: true, // Must be true for column search to work
             columns: [
                 { 
-                    data: null, 
-                    orderable: false, 
-                    className: 'text-center',
-                    render: function(data, type, row, meta) {
-                        return `<input type="checkbox" class="form-check-input row-checkbox" data-index="${meta.row}">`;
-                    }
+                    data: null, orderable: false, className: 'text-center',
+                    render: (data, type, row, meta) => `<input type="checkbox" class="form-check-input row-checkbox" data-index="${meta.row}">`
                 },
-                { data: 'name', title: 'Name' },
-                { data: 'position', title: 'Position' },
-                { data: 'office', title: 'Office' },
-                { data: 'nationality', title: 'Nationality' },
-                { data: 'age', title: 'Age' },
-                { data: 'startDate', title: 'Start Date' },
-                { data: 'salary', title: 'Salary' }
+                { data: 'name' }, { data: 'position' }, { data: 'office' }, { data: 'nationality' }, { data: 'age' }, { data: 'startDate' }, { data: 'salary' }
             ],
-            // DOM LAYOUT:
-            // <"top-pagination-container"p> -> Pagination in top middle
-            // t -> The Table
-            // <"bottom-left-controls"li> -> Length menu (l) and Info (i) stacked in bottom left
+            // Requirement 3: Layout configuration
             dom: '<"top-pagination-container"p>t<"bottom-left-controls"li>',
             language: {
                 lengthMenu: "Entries per page: _MENU_",
                 info: "Showing _START_ to _END_ of _TOTAL_ entries"
             },
             drawCallback: function() {
-                // Restore checkbox states on page change
                 $(`#${tableId} .row-checkbox`).each(function() {
                     const idx = $(this).data('index');
                     if(selectedRows.has(idx)) {
-                        $(this).prop('checked', true);
-                        $(this).closest('tr').addClass('selected');
+                        $(this).prop('checked', true).closest('tr').addClass('selected');
                     }
                 });
             }
         });
 
-        // 2. Generate Column Visibility Toggles
+        // Requirement 4: Apply column search logic
+        $tableEl.on('keyup change', '.column-search-row input', function () {
+            const colIdx = $(this).parent().index();
+            table.column(colIdx).search(this.value).draw();
+        });
+
+        // Requirement 5: Column Visibility
         table.columns().every(function(index) {
-            // Skip the checkbox column (index 0)
             if(index === 0) return;
-
-            const header = this.header();
-            const title = $(header).text();
+            const title = $(this.header()).text();
             const btn = $(`<button class="btn-toggle-col active-col">${title}</button>`);
-
             btn.on('click', function() {
-                const col = table.column(index);
-                const isVisible = !col.visible();
-                col.visible(isVisible);
-                
-                if(isVisible) {
-                    $(this).addClass('active-col').removeClass('inactive-col');
-                } else {
-                    $(this).removeClass('active-col').addClass('inactive-col');
-                }
+                const isVisible = !table.column(index).visible();
+                table.column(index).visible(isVisible);
+                $(this).toggleClass('active-col inactive-col', 200);
             });
-
             $(`#${visId}`).append(btn);
         });
 
-        // 3. Row Selection Logic
-        function updateCounter() {
-            $(`#${countId}`).text(selectedRows.size);
-        }
-
-        // Handle "Select All"
+        // Requirement 3 (Delete Logic):
         $(`#${selectAllId}`).on('change', function() {
             const isChecked = $(this).is(':checked');
-            const rows = table.rows({ search: 'applied' }).nodes();
-            
-            $(rows).each(function() {
-                const checkbox = $(this).find('.row-checkbox');
-                const idx = checkbox.data('index');
-                checkbox.prop('checked', isChecked);
-                
-                if(isChecked) {
-                    selectedRows.add(idx);
-                    $(this).addClass('selected');
-                } else {
-                    selectedRows.delete(idx);
-                    $(this).removeClass('selected');
-                }
+            $tableEl.find('.row-checkbox').each(function() {
+                const idx = $(this).data('index');
+                $(this).prop('checked', isChecked).closest('tr').toggleClass('selected', isChecked);
+                isChecked ? selectedRows.add(idx) : selectedRows.delete(idx);
             });
-            updateCounter();
+            $(`#${countId}`).text(selectedRows.size);
         });
 
-        // Handle Individual Checkbox
-        $(`#${tableId} tbody`).on('change', '.row-checkbox', function() {
+        $tableEl.on('change', '.row-checkbox', function() {
             const idx = $(this).data('index');
             const isChecked = $(this).is(':checked');
-            const row = $(this).closest('tr');
-
-            if(isChecked) {
-                selectedRows.add(idx);
-                row.addClass('selected');
-            } else {
-                selectedRows.delete(idx);
-                row.removeClass('selected');
-                $(`#${selectAllId}`).prop('checked', false);
-            }
-            updateCounter();
+            $(this).closest('tr').toggleClass('selected', isChecked);
+            isChecked ? selectedRows.add(idx) : selectedRows.delete(idx);
+            $(`#${countId}`).text(selectedRows.size);
         });
 
-        // 4. Delete Functionality
         $(`#${deleteBtnId}`).on('click', function() {
-            if(selectedRows.size === 0) return;
-
-            if(confirm(`Delete ${selectedRows.size} rows?`)) {
-                // Convert Set to Array and sort descending
+            if(selectedRows.size > 0 && confirm(`Delete ${selectedRows.size} rows?`)) {
                 const indexes = Array.from(selectedRows).sort((a,b) => b-a);
-                
-                indexes.forEach(idx => {
-                    table.row(idx).remove();
-                });
-                
+                indexes.forEach(idx => table.row(idx).remove());
                 selectedRows.clear();
                 $(`#${selectAllId}`).prop('checked', false);
-                updateCounter();
+                $(`#${countId}`).text(0);
                 table.draw();
             }
         });
@@ -390,16 +268,13 @@
     }
 
     $(document).ready(function() {
-        // Initializing tables without search params
-        const table1 = initDataTable('table1', 'colVis1', 'selectAll1', 'deleteBtn1', 'count1');
-        const table2 = initDataTable('table2', 'colVis2', 'selectAll2', 'deleteBtn2', 'count2');
-
-        // Fix column alignment when switching tabs
+        initDataTable('table1', 'colVis1', 'selectAll1', 'deleteBtn1', 'count1');
+        initDataTable('table2', 'colVis2', 'selectAll2', 'deleteBtn2', 'count2');
+        
         $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(){
             $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
         });
     });
 </script>
-
 </body>
 </html>
