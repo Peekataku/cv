@@ -177,23 +177,3 @@ $(document).ready(function() {
 </script>
 </body>
 </html>"""
-
-# WRITE FILE
-file_name = "datatables.html"
-with open(file_name, "w") as f:
-    f.write(html_content)
-print(f"Created {file_name} locally.")
-
-# 2. PUSH TO REMOTE REPOSITORY
-def run_command(cmd):
-    return subprocess.run(cmd, shell=True, capture_output=True, text=True)
-
-print("Starting Git Push...")
-run_command("git add datatables.html")
-run_command('git commit -m "Update datatables.html with merged functionality"')
-push_res = run_command("git push")
-
-if push_res.returncode == 0:
-    print("Successfully pushed to remote repository.")
-else:
-    print("Push failed. Error:", push_res.stderr)
