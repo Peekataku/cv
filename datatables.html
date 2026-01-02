@@ -1,160 +1,99 @@
-<!DOCTYPE html>
+import os
+import subprocess
+
+# 1. THE HTML CONTENT (Built to your exact specs)
+html_content = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataTables Custom Layout - Final</title>
+    <title>DataTables Management</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-            padding: 2rem;
-        }
-
-        .main-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: none;
-            overflow: hidden;
-        }
-
-        .card-header-custom {
-            background-color: #fff;
-            border-bottom: 1px solid #eee;
-            padding: 1.5rem 2rem 0;
-        }
-
-        .tab-content { padding: 2rem; }
-
-        /* Controls Section */
-        .controls-section {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e9ecef;
-        }
-
-        .section-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #6c757d;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            display: block;
-        }
-
-        /* Column Visibility Buttons */
-        .btn-toggle-col {
-            font-size: 0.85rem;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            border-radius: 20px;
-            padding: 5px 12px;
-            border: 1px solid #dee2e6;
-            background: white;
-            transition: all 0.2s;
-        }
-
-        .active-col { background-color: #e7f1ff; color: #0d6efd; border-color: #0d6efd; }
-        .inactive-col { opacity: 0.6; background: #f8f9fa; }
-
-        /* Layout Positioning */
-        .top-pagination-container {
+        body { background-color: #f4f7f6; padding: 2rem; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container-card { background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 20px; }
+        
+        /* 3. Layout: Page navigation in top middle */
+        .top-center-paging .dataTables_paginate {
             display: flex;
             justify-content: center;
-            margin-bottom: 1.5rem;
+            float: none !important;
+            margin-bottom: 20px;
         }
 
-        .bottom-left-controls {
+        /* 3. Layout: Entries and Info in lower left, stacked */
+        .bottom-left-stack {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            margin-top: 1rem;
-            gap: 0.25rem;
+            margin-top: 15px;
         }
-
-        /* Column Search Input Styling */
-        .column-search-row input {
+        
+        /* 5. Show/Hide Buttons */
+        .col-toggle-btn { margin-right: 5px; margin-bottom: 5px; font-size: 0.8rem; }
+        
+        /* 4. Column Search Styling */
+        thead input {
             width: 100%;
+            padding: 3px;
+            box-sizing: border-box;
             font-size: 0.8rem;
-            padding: 4px 8px;
         }
-
-        table.dataTable thead th {
-            background-color: #212529;
-            color: white;
-        }
-
-        .selected { background-color: rgba(13, 110, 253, 0.1) !important; }
+        
+        .selected-row { background-color: #e2f0ff !important; }
+        .tab-pane { padding-top: 20px; }
     </style>
 </head>
 <body>
 
-<div class="container-fluid" style="max-width: 1400px;">
-    <div class="main-card">
-        <div class="card-header-custom">
-            <h3 class="mb-4">Data Management</h3>
-            <ul class="nav nav-tabs" id="myTab" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active" id="tab1-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button">Employee List A</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" id="tab2-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button">Employee List B</button>
-                </li>
-            </ul>
+<div class="container-fluid container-card">
+    <h2 class="mb-4 text-center">CV Inventory Management</h2>
+
+    <ul class="nav nav-tabs" id="tableTabs" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="primary-tab" data-bs-toggle="tab" data-bs-target="#tab1" type="button">Primary Database</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="secondary-tab" data-bs-toggle="tab" data-bs-target="#tab2" type="button">Archive Database</button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="tab1">
+            <div id="colVis1" class="mb-3"><strong>Toggle Columns: </strong></div>
+            <table id="example1" class="table table-striped table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                        <th>Age</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+            </table>
+            <button id="delBtn1" class="btn btn-danger btn-sm mt-2">Delete Selected Rows</button>
         </div>
 
-        <div class="tab-content">
-            <div class="tab-pane fade show active" id="tab1" role="tabpanel">
-                <div class="controls-section">
-                    <span class="section-label">Show/Hide Columns</span>
-                    <div id="colVis1"></div>
-                </div>
-
-                <table id="table1" class="table table-striped table-hover w-100">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;"><input type="checkbox" class="form-check-input" id="selectAll1"></th>
-                            <th>Name</th><th>Position</th><th>Office</th><th>Nationality</th><th>Age</th><th>Start Date</th><th>Salary</th>
-                        </tr>
-                    </thead>
-                </table>
-
-                <div class="mt-3 border-top pt-3">
-                    <button id="deleteBtn1" class="btn btn-danger btn-sm">
-                        Delete Selected Rows <span id="count1" class="badge bg-white text-danger ms-1">0</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="tab-pane fade" id="tab2" role="tabpanel">
-                <div class="controls-section">
-                    <span class="section-label">Show/Hide Columns</span>
-                    <div id="colVis2"></div>
-                </div>
-
-                <table id="table2" class="table table-striped table-hover w-100">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;"><input type="checkbox" class="form-check-input" id="selectAll2"></th>
-                            <th>Name</th><th>Position</th><th>Office</th><th>Nationality</th><th>Age</th><th>Start Date</th><th>Salary</th>
-                        </tr>
-                    </thead>
-                </table>
-
-                <div class="mt-3 border-top pt-3">
-                    <button id="deleteBtn2" class="btn btn-danger btn-sm">
-                        Delete Selected Rows <span id="count2" class="badge bg-white text-danger ms-1">0</span>
-                    </button>
-                </div>
-            </div>
+        <div class="tab-pane fade" id="tab2">
+            <div id="colVis2" class="mb-3"><strong>Toggle Columns: </strong></div>
+            <table id="example2" class="table table-striped table-bordered w-100">
+                <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                        <th>Age</th>
+                        <th>Salary</th>
+                    </tr>
+                </thead>
+            </table>
+            <button id="delBtn2" class="btn btn-danger btn-sm mt-2">Delete Selected Rows</button>
         </div>
     </div>
 </div>
@@ -165,116 +104,96 @@
 <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
-    const dataset = [
-        { name: "Tiger Nixon", position: "System Architect", office: "Edinburgh", nationality: "Scottish", age: 61, startDate: "2011/04/25", salary: "$320,800" },
-        { name: "Garrett Winters", position: "Accountant", office: "Tokyo", nationality: "Japanese", age: 63, startDate: "2011/07/25", salary: "$170,750" },
-        { name: "Ashton Cox", position: "Junior Technical Author", office: "San Francisco", nationality: "American", age: 66, startDate: "2009/01/12", salary: "$86,000" },
-        { name: "Cedric Kelly", position: "Senior Javascript Developer", office: "Edinburgh", nationality: "Scottish", age: 22, startDate: "2012/03/29", salary: "$433,060" },
-        { name: "Airi Satou", position: "Accountant", office: "Tokyo", nationality: "Japanese", age: 33, startDate: "2008/11/28", salary: "$162,700" },
-        { name: "Brielle Williamson", position: "Integration Specialist", office: "New York", nationality: "American", age: 61, startDate: "2012/12/02", salary: "$372,000" },
-        { name: "Herrod Chandler", position: "Sales Assistant", office: "San Francisco", nationality: "American", age: 59, startDate: "2012/08/06", salary: "$137,500" },
-        { name: "Rhona Davidson", position: "Integration Specialist", office: "Tokyo", nationality: "Japanese", age: 55, startDate: "2010/10/14", salary: "$327,900" },
-        { name: "Colleen Hurst", position: "Javascript Developer", office: "San Francisco", nationality: "American", age: 39, startDate: "2009/09/15", salary: "$205,500" },
-        { name: "Sonya Frost", position: "Software Engineer", office: "Edinburgh", nationality: "Scottish", age: 23, startDate: "2008/12/13", salary: "$103,600" }
-    ];
+const dataSet = [
+    [null, "Tiger Nixon", "System Architect", "Edinburgh", "61", "$320,800"],
+    [null, "Garrett Winters", "Accountant", "Tokyo", "63", "$170,750"],
+    [null, "Ashton Cox", "Junior Technical Author", "San Francisco", "66", "$86,000"],
+    [null, "Cedric Kelly", "Senior Javascript Developer", "Edinburgh", "22", "$433,060"],
+    [null, "Airi Satou", "Accountant", "Tokyo", "33", "$162,700"]
+];
 
-    function initDataTable(tableId, visId, selectAllId, deleteBtnId, countId) {
-        let selectedRows = new Set();
-        const $tableEl = $(`#${tableId}`);
+function setupTable(tableId, colVisId, delBtnId) {
+    // 4. Add Individual Column Searching
+    $(`${tableId} thead tr`).clone(true).addClass('filters').appendTo(`${tableId} thead`);
 
-        // Requirement 4: Add individual column search inputs
-        $tableEl.find('thead tr').clone(true).addClass('column-search-row').appendTo($tableEl.find('thead'));
-        $tableEl.find('thead tr:eq(1) th').each(function (i) {
-            if (i === 0) { $(this).html(''); return; }
-            $(this).html('<input type="text" class="form-control form-control-sm" placeholder="Filter..." />');
-        });
-
-        const table = $tableEl.DataTable({
-            data: dataset,
-            searching: true, // Must be true for column search to work
-            columns: [
-                { 
-                    data: null, orderable: false, className: 'text-center',
-                    render: (data, type, row, meta) => `<input type="checkbox" class="form-check-input row-checkbox" data-index="${meta.row}">`
-                },
-                { data: 'name' }, { data: 'position' }, { data: 'office' }, { data: 'nationality' }, { data: 'age' }, { data: 'startDate' }, { data: 'salary' }
-            ],
-            // Requirement 3: Layout configuration
-            dom: '<"top-pagination-container"p>t<"bottom-left-controls"li>',
-            language: {
-                lengthMenu: "Entries per page: _MENU_",
-                info: "Showing _START_ to _END_ of _TOTAL_ entries"
-            },
-            drawCallback: function() {
-                $(`#${tableId} .row-checkbox`).each(function() {
-                    const idx = $(this).data('index');
-                    if(selectedRows.has(idx)) {
-                        $(this).prop('checked', true).closest('tr').addClass('selected');
+    const table = $(tableId).DataTable({
+        data: dataSet,
+        orderCellsTop: true,
+        // 3. Layout logic: Paging top (p), Table (t), Length/Info bottom (li)
+        dom: '<"top-center-paging"p>t<"bottom-left-stack"li>',
+        columnDefs: [{
+            targets: 0,
+            orderable: false,
+            className: 'select-checkbox',
+            render: function() { return '<input type="checkbox" class="row-select">'; }
+        }],
+        initComplete: function() {
+            const api = this.api();
+            // Setup Search Inputs
+            $(`${tableId} thead tr.filters th`).each(function(i) {
+                if (i == 0) { $(this).html(''); return; }
+                $(this).html('<input type="text" placeholder="Search..." />');
+                $('input', this).on('keyup change', function() {
+                    if (api.column(i).search() !== this.value) {
+                        api.column(i).search(this.value).draw();
                     }
                 });
-            }
-        });
-
-        // Requirement 4: Apply column search logic
-        $tableEl.on('keyup change', '.column-search-row input', function () {
-            const colIdx = $(this).parent().index();
-            table.column(colIdx).search(this.value).draw();
-        });
-
-        // Requirement 5: Column Visibility
-        table.columns().every(function(index) {
-            if(index === 0) return;
-            const title = $(this.header()).text();
-            const btn = $(`<button class="btn-toggle-col active-col">${title}</button>`);
-            btn.on('click', function() {
-                const isVisible = !table.column(index).visible();
-                table.column(index).visible(isVisible);
-                $(this).toggleClass('active-col inactive-col', 200);
             });
-            $(`#${visId}`).append(btn);
-        });
 
-        // Requirement 3 (Delete Logic):
-        $(`#${selectAllId}`).on('change', function() {
-            const isChecked = $(this).is(':checked');
-            $tableEl.find('.row-checkbox').each(function() {
-                const idx = $(this).data('index');
-                $(this).prop('checked', isChecked).closest('tr').toggleClass('selected', isChecked);
-                isChecked ? selectedRows.add(idx) : selectedRows.delete(idx);
+            // 5. Show / Hide Columns logic
+            api.columns().every(function(i) {
+                if (i == 0) return;
+                let title = api.column(i).header().textContent;
+                $('<button class="btn btn-outline-secondary btn-sm col-toggle-btn active">' + title + '</button>')
+                    .appendTo(colVisId)
+                    .on('click', function() {
+                        let column = api.column(i);
+                        column.visible(!column.visible());
+                        $(this).toggleClass('active');
+                    });
             });
-            $(`#${countId}`).text(selectedRows.size);
-        });
-
-        $tableEl.on('change', '.row-checkbox', function() {
-            const idx = $(this).data('index');
-            const isChecked = $(this).is(':checked');
-            $(this).closest('tr').toggleClass('selected', isChecked);
-            isChecked ? selectedRows.add(idx) : selectedRows.delete(idx);
-            $(`#${countId}`).text(selectedRows.size);
-        });
-
-        $(`#${deleteBtnId}`).on('click', function() {
-            if(selectedRows.size > 0 && confirm(`Delete ${selectedRows.size} rows?`)) {
-                const indexes = Array.from(selectedRows).sort((a,b) => b-a);
-                indexes.forEach(idx => table.row(idx).remove());
-                selectedRows.clear();
-                $(`#${selectAllId}`).prop('checked', false);
-                $(`#${countId}`).text(0);
-                table.draw();
-            }
-        });
-
-        return table;
-    }
-
-    $(document).ready(function() {
-        initDataTable('table1', 'colVis1', 'selectAll1', 'deleteBtn1', 'count1');
-        initDataTable('table2', 'colVis2', 'selectAll2', 'deleteBtn2', 'count2');
-        
-        $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function(){
-            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
-        });
+        }
     });
+
+    // 3. Select and Delete logic
+    $(tableId + ' tbody').on('click', 'input.row-select', function() {
+        $(this).closest('tr').toggleClass('selected-row');
+    });
+
+    $(delBtnId).click(function() {
+        table.rows('.selected-row').remove().draw();
+    });
+}
+
+$(document).ready(function() {
+    setupTable('#example1', '#colVis1', '#delBtn1');
+    setupTable('#example2', '#colVis2', '#delBtn2');
+    
+    // Fix for DataTables in tabs
+    $('button[data-bs-toggle="tab"]').on('shown.bs.tab', function () {
+        $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
+    });
+});
 </script>
 </body>
-</html>
+</html>"""
+
+# WRITE FILE
+file_name = "datatables.html"
+with open(file_name, "w") as f:
+    f.write(html_content)
+print(f"Created {file_name} locally.")
+
+# 2. PUSH TO REMOTE REPOSITORY
+def run_command(cmd):
+    return subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+print("Starting Git Push...")
+run_command("git add datatables.html")
+run_command('git commit -m "Update datatables.html with merged functionality"')
+push_res = run_command("git push")
+
+if push_res.returncode == 0:
+    print("Successfully pushed to remote repository.")
+else:
+    print("Push failed. Error:", push_res.stderr)
